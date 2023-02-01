@@ -68,88 +68,23 @@
         color="blue"
         class="font-weight-bold"
         v-if="!$store.getters.isAuthenticated"
-        router
-        to="/signin"
+        @click="redirectGoogleSignin" 
       >
         <v-icon left size="26">mdi-account-circle</v-icon> Sign in
       </v-btn>
+      <v-btn
+        tile
+        outlined
+        color="red"
+        class="font-weight-bold"
+        v-else
+        @click="signOut" 
+      >
+        <v-icon left size="26">mdi-login-variant</v-icon> Sign Out
+      </v-btn>
+      
+      
 
-      <v-menu offset-y left v-else>
-        <template v-slot:activator="{ on }">
-          <v-btn small color="red" depressed fab v-on="on" class="white--text">
-            <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
-              <img
-                :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                :alt="`${currentUser.channelName} avatar`"
-              />
-            </v-avatar>
-            <template v-else>
-              <span class="headline">
-                {{ currentUser.channelName.split('')[0].toUpperCase() }}
-              </span>
-            </template>
-          </v-btn>
-        </template>
-
-        <v-card>
-          <v-list>
-            <v-list-item>
-              <v-list-item-avatar>
-                <v-avatar v-if="currentUser.photoUrl !== 'no-photo.jpg'">
-                  <img
-                    :src="`${getUrl}/uploads/avatars/${currentUser.photoUrl}`"
-                    :alt="`${currentUser.channelName} avatar`"
-                  />
-                </v-avatar>
-                <template v-else>
-                  <v-avatar color="red">
-                    <span class="white--text headline ">
-                      {{
-                        currentUser.channelName.split('')[0].toUpperCase()
-                      }}</span
-                    >
-                  </v-avatar>
-                </template>
-              </v-list-item-avatar>
-
-              <v-list-item-content>
-                <v-list-item-title class="text-capitalize">{{
-                  currentUser.channelName
-                }}</v-list-item-title>
-                <v-list-item-subtitle>{{
-                  currentUser.email
-                }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-
-          <v-divider></v-divider>
-
-          <v-list>
-            <v-list-item
-              router
-              :to="`/channels/${$store.getters.currentUser._id}`"
-            >
-              <v-list-item-icon>
-                <v-icon>mdi-account-box</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Your channel</v-list-item-title>
-            </v-list-item>
-            <v-list-item router to="/studio">
-              <v-list-item-icon>
-                <v-icon>mdi-youtube-studio</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>VueTube Studio</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="signOut">
-              <v-list-item-icon>
-                <v-icon>mdi-login-variant</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>Sign out</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </v-menu>
     </v-app-bar>
 
     <v-navigation-drawer
@@ -278,7 +213,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import SubscriptionService from '@/services/SubscriptionService'
-import HistoryService from '@/services/HistoryService'
 
 export default {
   data: () => ({
@@ -289,115 +223,20 @@ export default {
         pages: [
           { title: 'Home', link: '/', icon: 'mdi-home' },
           { title: 'Trending', link: '/trending', icon: 'mdi-fire' },
-          {
-            title: 'Subscriptions',
-            link: '/subscriptions',
-            icon: 'mdi-youtube-subscription'
-          }
         ]
       },
       {
         header: null,
         pages: [
-          // {
-          //   title: 'Library',
-          //   link: '#l',
-          //   icon: 'mdi-play-box-multiple'
-          // },
+
           {
             title: 'History',
             link: '/history',
             icon: 'mdi-history'
-          },
-          // {
-          //   title: 'Your videos',
-          //   link: '#yv',
-          //   icon: 'mdi-play-box-outline'
-          // },
-
-          // {
-          //   title: 'Watch later',
-          //   link: '#wl',
-          //   icon: 'mdi-clock'
-          // },
-
-          {
-            title: 'Liked videos',
-            link: '/liked-videos',
-            icon: 'mdi-thumb-up'
           }
+    
         ]
       },
-      {
-        header: 'Subscriptions',
-        pages: [
-          // {
-          //   title: 'Traversy Media',
-          //   link: '#tm',
-          //   icon: 'mdi-badge-account'
-          // },
-          // {
-          //   title: 'The New Boston',
-          //   link: '#tn',
-          //   icon: 'mdi-badge-account'
-          // },
-          // {
-          //   title: 'Net Ninija',
-          //   link: '#nn',
-          //   icon: 'mdi-badge-account'
-          // },
-          // {
-          //   title: 'Chris Hawks',
-          //   link: '#ch',
-          //   icon: 'mdi-badge-account'
-          // }
-        ]
-      },
-      {
-        header: 'MORE FROM VUETUBE',
-        pages: [
-          {
-            title: 'VueTube Premium',
-            link: '#vp',
-            icon: 'mdi-youtube'
-          },
-          {
-            title: 'Gaming',
-            link: '#g',
-            icon: 'mdi-youtube-gaming'
-          },
-          {
-            title: 'Live',
-            link: '#li',
-            icon: 'mdi-access-point'
-          }
-        ]
-      },
-      {
-        header: null,
-        pages: [
-          {
-            title: 'Setting',
-            link: '#sg',
-            icon: 'mdi-cog'
-          },
-          {
-            title: 'Report history',
-            link: '#rh',
-            icon: 'mdi-flag'
-          },
-          {
-            title: 'Help',
-            link: '#hp',
-            icon: 'mdi-help-circle'
-          },
-          {
-            title: 'Send feedback',
-            link: '#f',
-            icon: 'mdi-message-alert'
-          }
-        ]
-      }
     ],
     links: [
       { text: 'About', link: '#' },
@@ -421,19 +260,6 @@ export default {
   },
   methods: {
     async search() {
-      if (!this.searchText) return
-      // console.log(this.searchText == this.$route.query['search-query'])
-      if (this.searchText == this.$route.query['search-query']) return
-      // this.searchText = this.$route.query['search-query']
-      const data = {
-        type: 'search',
-        searchText: this.searchText
-      }
-
-      if (this.isAuthenticated)
-        await HistoryService.createHistory(data).catch((err) =>
-          console.log(err)
-        )
 
       this.$router.push({
         name: 'Search',
@@ -455,6 +281,9 @@ export default {
     signOut() {
       this.$store.dispatch('signOut')
       // this.$router.push('/')
+    },
+    redirectGoogleSignin(){
+      location.assign('http://localhost:3003/auth');
     }
   },
   // beforeRouteLeave(to, from, next) {

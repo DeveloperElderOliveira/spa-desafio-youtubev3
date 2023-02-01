@@ -194,9 +194,7 @@ export default {
       if (!this.loaded) {
         this.loading = true
       }
-      const results = await SearchService.search(this.page, {
-        text: this.text
-      })
+      const results = await SearchService.search(this.text)
         .catch((err) => {
           console.log(err)
           this.errored = true
@@ -207,19 +205,16 @@ export default {
 
       if (!results) return
       // console.log(results)
-      if (results.data.data.length) {
-        this.page += 1
+      if (results.data.items.length) {
 
-        this.results.push(...results.data.data)
-        if ($state) {
-          $state.loaded()
-        }
-
+        this.results.push(...results.data.items)
+        $state.loaded()
+      
         this.loaded = true
       } else {
-        if ($state) {
+    
           $state.complete()
-        }
+      
       }
     }
   },
@@ -230,6 +225,7 @@ export default {
     // console.log(to.query['search-query'])
     if (to.query['search-query'] === '') return
     this.text = to.query['search-query']
+    console.log('');
     this.page = 1
     this.results = []
     this.infiniteId += 1
@@ -238,6 +234,7 @@ export default {
   },
   mounted() {
     this.text = this.$route.query['search-query']
+    console.log('2');
   }
 }
 </script>

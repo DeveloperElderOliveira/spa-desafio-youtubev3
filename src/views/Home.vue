@@ -23,7 +23,7 @@
             sm="6"
             md="4"
             lg="3"
-            v-for="(video, i) in loading ? 12 : videos"
+            v-for="(video, i) in loading ? 12 : videosnovos"
             :key="i"
             class="mx-xs-auto"
           >
@@ -31,11 +31,10 @@
               <video-card
                 :card="{ maxWidth: 350 }"
                 :video="video"
-                :channel="video.userId"
               ></video-card>
             </v-skeleton-loader>
           </v-col>
-          <v-col class="text-center" v-if="videos.length === 0 && !loading">
+          <v-col class="text-center" v-if="videosnovos.length === 0 && !loading">
             <p>No videos yet</p>
           </v-col>
           <v-col cols="12" sm="12" md="12" lg="12">
@@ -78,6 +77,7 @@ import moment from 'moment'
 
 import VideoCard from '@/components/VideoCard'
 import VideoService from '@/services/VideoService'
+import {  mapState } from 'vuex'
 
 export default {
   name: 'Home',
@@ -88,13 +88,17 @@ export default {
     videos: [],
     page: 1
   }),
+  computed: {
+    ...mapState(["videosnovos"])
+  },
   methods: {
+   
     async getVideos($state) {
       if (!this.loaded) {
         this.loading = true
       }
 
-      const videos = await VideoService.getAll('public', { page: this.page })
+      const videos = await VideoService.getAll()
         .catch((err) => {
           console.log(err)
           this.errored = true
@@ -105,9 +109,9 @@ export default {
 
       if (typeof videos === 'undefined') return
 
-      if (videos.data.data.length) {
-        this.page += 1
-        this.videos.push(...videos.data.data)
+      if (videos.data.items.length) {
+        // this.videos.push(...videos.data.items)
+        this.$store.dispatch('setVideos',videos.data.items)
         $state.loaded()
         this.loaded = true
       } else {

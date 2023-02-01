@@ -3,7 +3,7 @@ import AuthenticationService from '@/services/AuthenticationService'
 const state = {
   url: process.env.VUE_APP_URL,
   token: localStorage.getItem('token') || null,
-  user: JSON.parse(localStorage.getItem('user')) || null,
+  user_email: localStorage.getItem('user_email') || null,
   isUserLoggedIn: localStorage.getItem('token') || false
 }
 
@@ -18,7 +18,7 @@ const getters = {
     return state.token
   },
   currentUser: (state) => {
-    return state.user
+    return state.user_email
   }
 }
 
@@ -31,12 +31,12 @@ const mutations = {
       state.isUserLoggedIn = false
     }
   },
-  SET_USER_DATA(state, data) {
-    state.user = data
+  SET_USER_EMAIL(state, email) {
+    state.user_email = email
   },
   CLEAR_AUTH(state) {
     state.token = null
-    state.user = null
+    state.user_email = null
     state.isUserLoggedIn = false
   }
 }
@@ -53,32 +53,18 @@ const actions = {
         .catch((err) => reject(err))
     })
   },
-  signIn({ commit }, credentials) {
-    return new Promise((resolve, reject) => {
-      AuthenticationService.signIn(credentials)
-        .then(({ data }) => {
-          localStorage.setItem('token', data.token)
-          commit('SET_TOKEN', data.token)
-
-          resolve(data)
-        })
-        .catch((err) => reject(err))
-    })
+  signIn({ commit }, credentials) {  
+        localStorage.setItem('token', credentials.token)
+        commit('SET_TOKEN', credentials.token)
+        localStorage.setItem('user_email', credentials.email)
+        commit('SET_USER_EMAIL', credentials.email)
   },
-  getCurrentUser({ commit }, token) {
-    return new Promise((resolve, reject) => {
-      AuthenticationService.me(token)
-        .then(({ data }) => {
-          localStorage.setItem('user', JSON.stringify(data.data))
-          commit('SET_USER_DATA', data.data)
-          resolve(data)
-        })
-        .catch((err) => reject(err))
-    })
+  getCurrentUser() {
+    return state.user_email;
   },
   signOut({ commit }) {
     localStorage.removeItem('token')
-    localStorage.removeItem('user')
+    localStorage.removeItem('user_email')
     commit('CLEAR_AUTH')
   }
 }
