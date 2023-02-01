@@ -212,7 +212,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import SubscriptionService from '@/services/SubscriptionService'
+import SearchService from '@/services/SearchService'
+import {  mapState } from 'vuex'
 
 export default {
   data: () => ({
@@ -256,27 +257,27 @@ export default {
     // user: null
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated'])
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated']),
+    ...mapState(["videosnovos"])
   },
   methods: {
     async search() {
 
-      this.$router.push({
-        name: 'Search',
-        query: { 'search-query': this.searchText }
-      })
-    },
-    async getSubscribedChannels() {
-      const channels = await SubscriptionService.getSubscribedChannels(
-        this.currentUser._id
-      ).catch((err) => console.log(err))
-      this.items[2].pages = channels.data.data
-      this.channelLength = 3
-    },
-    moreChannels() {
-      if (this.channelLength === 3)
-        this.channelLength = this.items[2].pages.length
-      else this.channelLength = 3
+
+      const videos = await SearchService.search(this.searchText)
+        .catch((err) => {
+          console.log(err)
+        })
+
+      if (typeof videos === 'undefined')
+      this.$store.dispatch('setVideos',[])
+
+      if (videos.data.items.length) {
+        this.$store.dispatch('setVideos',videos.data.items)
+      }else{
+        this.$store.dispatch('setVideos',[])
+      }
+
     },
     signOut() {
       this.$store.dispatch('signOut')
@@ -286,35 +287,17 @@ export default {
       location.assign('http://localhost:3003/auth');
     }
   },
-  // beforeRouteLeave(to, from, next) {
-  //   this.searchText = ''
-  //   next()
-  // },
-  // beforeRouteUpdate(to, from, next) {
-  //   if (!to.query['search-query'] === '') return
-  //   this.searchText = to.query['search-query']
-  //   next()
-  // },
+
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       if (!to.query['search-query'] === '') return
       vm.searchText = to.query['search-query']
-      // vm.getSearchResults(to.query['search-query'])
     })
   },
   mounted() {
-    // if (this.$route.query['search-query'])
-    //   this.searchText = this.$route.query['search-query']
 
-    if (this.currentUser) this.getSubscribedChannels()
-    // this.user = this.$store.getters.currentUser
-    // console.log(this.user)
-    this.drawer = this.$vuetify.breakpoint.mdAndDown ? false : true
-    // console.log(this.$route.name)
-    this.drawer = this.$route.name === 'Watch' ? false : this.drawer
   },
   created() {
-    this.drawer = this.$route.name === 'Watch' ? false : this.drawer
 
     if (!this.isAuthenticated) {
       this.items[2].header = false

@@ -30,15 +30,6 @@ const routes = [
     },
     meta: { requiresAuth: true }
   },
-  {
-    path: '/search',
-    name: 'Search',
-    components: {
-      NavBar,
-      default: () =>
-        import(/* webpackChunkName: "video" */ '../views/Search.vue')
-    }
-  }
 ]
 
 const router = new VueRouter({
