@@ -21,7 +21,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-menu offsetY>
+      <v-menu offsetY v-if="$store.getters.isAuthenticated">
         <template v-slot:activator="{ on: menu }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on: tooltip }">
@@ -33,35 +33,12 @@
           </v-tooltip>
         </template>
         <v-list>
-          <v-list-item router to="/studio">
-            <v-list-item-icon class="mr-3"
-              ><v-icon>mdi-play-box-outline</v-icon></v-list-item-icon
-            >
-            <v-list-item-title>Upload video</v-list-item-title>
+          <v-list-item >
+            <input type="file" @change="onFileChange" />
+            <button @click="onUploadFile" class="upload-button" :disabled="!this.selectedFile">Upload file</button>
           </v-list-item>
-          <!-- <v-list-item>
-            <v-list-item-icon class="mr-3"
-              ><v-icon>mdi-access-point</v-icon></v-list-item-icon
-            >
-            <v-list-item-title>Go live</v-list-item-title>
-          </v-list-item> -->
         </v-list>
       </v-menu>
-      <!-- <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on"> <v-icon size="25">mdi-apps</v-icon></v-btn>
-        </template>
-        <span>VueTube apps</span>
-      </v-tooltip> -->
-
-      <!-- <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" class="mr-7">
-            <v-icon size="25">mdi-bell</v-icon></v-btn
-          >
-        </template>
-        <span>Notifications</span>
-      </v-tooltip> -->
       <v-btn
         tile
         outlined
@@ -214,9 +191,11 @@
 import { mapGetters } from 'vuex'
 import SearchService from '@/services/SearchService'
 import {  mapState } from 'vuex'
+import axios from 'axios'
 
 export default {
   data: () => ({
+    selectedFile: "",
     drawer: true,
     items: [
       {
@@ -245,10 +224,30 @@ export default {
     // user: null
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated']),
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated','getToken']),
     ...mapState(["videosnovos"])
   },
   methods: {
+
+    onFileChange(e) {
+      const selectedFile = e.target.files[0]; // accessing file
+      this.selectedFile = selectedFile;
+    },
+    onUploadFile() {
+      const formData = new FormData();
+      formData.append("file", this.selectedFile);
+       // appending file
+    
+      axios
+        .post("http://localhost:3003/uploadVideo/" + this.$store.getters.getToken, formData)
+        .then(res => {
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
     async search() {
 
 
@@ -299,6 +298,18 @@ export default {
 .v-list-item__avatar {
   justify-content: center !important;
 }
+
+.upload-button {
+  width: 7rem;
+  padding: 0.5rem;
+  background-color: #278be9;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 1rem;
+}
+
 #showBtn {
   .v-btn__content {
     justify-content: flex-start;
@@ -330,6 +341,8 @@ export default {
     width: 10px;
     right: 0;
   }
+
+
 
   .vb > .vb-dragger > .vb-dragger-styler {
     -webkit-backface-visibility: hidden;
