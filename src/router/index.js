@@ -25,7 +25,7 @@ const routes = [
     name: 'Historic',
     components: {
       NavBar,
-      default: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
+      default: () => import(/* webpackChunkName: "about" */ '../views/Historic.vue')
     }
   },
 

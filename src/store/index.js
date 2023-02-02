@@ -6,23 +6,33 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    videosnovos: ""
+    videosnovos: "",
+    historic: []
   },
   getters: {
-
+    getHistoric: (state) => {
+      return state.historic
+    },
   },
   mutations: {
     SET_VIDEOS(state,videos){
       state.videosnovos = videos;
-    }
+    },
+    SET_HISTORIC(state,historic){
+      state.historic.push(historic);
+    },
   },
   actions: {
     setVideos({ commit }, videos) {
-        // localStorage.setItem('token', credentials.token)
+
         commit('SET_VIDEOS', videos)
-        // localStorage.setItem('user_email', credentials.email)
-        // commit('SET_USER_EMAIL', credentials.email)
+
     },
+    setHistoric({ commit }, historic) {
+
+      commit('SET_HISTORIC', historic)
+
+  },
   },
   modules: { auth}
 })

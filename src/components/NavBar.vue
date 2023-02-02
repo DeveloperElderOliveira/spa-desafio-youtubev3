@@ -224,7 +224,7 @@ export default {
     // user: null
   }),
   computed: {
-    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated','getToken']),
+    ...mapGetters(['currentUser', 'getUrl', 'isAuthenticated','getToken','getHistoric']),
     ...mapState(["videosnovos"])
   },
   methods: {
@@ -250,7 +250,9 @@ export default {
 
     async search() {
 
-
+      this.$store.dispatch('setHistoric',this.searchText)
+      console.log(this.$store.getters.getHistoric);
+      
       const videos = await SearchService.search(this.searchText)
         .catch((err) => {
           console.log(err)
