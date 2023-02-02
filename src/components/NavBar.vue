@@ -223,21 +223,9 @@ export default {
         header: null,
         pages: [
           { title: 'Home', link: '/', icon: 'mdi-home' },
-          { title: 'Trending', link: '/trending', icon: 'mdi-fire' },
+          { title: 'Historic', link: '/historic', icon: 'mdi-history' },
         ]
-      },
-      {
-        header: null,
-        pages: [
-
-          {
-            title: 'History',
-            link: '/history',
-            icon: 'mdi-history'
-          }
-    
-        ]
-      },
+      }
     ],
     links: [
       { text: 'About', link: '#' },

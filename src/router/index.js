@@ -14,22 +14,21 @@ const routes = [
     }
   },
   {
-    path: '/signin/:accessToken/:email',
+    path: '/signin/:accessToken',
     name: 'SignIn',
     component: () =>
       import(/* webpackChunkName: "signin" */ '../views/Auth/SignIn.vue'),
     meta: { requiresVisitor: true }
   },
   {
-    path: '/history',
-    name: 'History',
+    path: '/historic',
+    name: 'Historic',
     components: {
       NavBar,
-      default: () =>
-        import(/* webpackChunkName: "video" */ '../views/History.vue')
-    },
-    meta: { requiresAuth: true }
+      default: () => import(/* webpackChunkName: "about" */ '../views/Home.vue')
+    }
   },
+
 ]
 
 const router = new VueRouter({

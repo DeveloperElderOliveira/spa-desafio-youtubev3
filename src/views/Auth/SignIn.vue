@@ -43,7 +43,7 @@ export default {
   },
   created(){
     let acessToken = this.$route.params.accessToken ? this.$route.params.accessToken : '';
-    let email = this.$route.params.email ? this.$route.params.email : '';
+    let email = this.$route.params.email ? this.$route.params.email : 'usuariologado@hotmail.com';
     this.$store.dispatch('signIn', { email: email, token: acessToken })
     this.$router.push({ name: 'Home' })
   }
