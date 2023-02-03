@@ -251,7 +251,6 @@ export default {
     async search() {
 
       this.$store.dispatch('setHistoric',this.searchText)
-      console.log(this.$store.getters.getHistoric);
       
       const videos = await SearchService.search(this.searchText)
         .catch((err) => {

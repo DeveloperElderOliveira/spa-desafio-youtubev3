@@ -4,8 +4,7 @@
     :max-width="card.maxWidth"
     flat
     tile
-    router
-    :to="`/watch/${video._id}`"
+    @click="redirectTo"
   >
     <v-img
       :src="video.snippet.thumbnails.medium.url"
@@ -67,6 +66,9 @@ export default {
     dateFormatter(date) {
       return moment(date).fromNow();
     },
+    redirectTo() {
+      window.location.href = "https://www.youtube.com.br/watch?v=" + (this.video.id.videoId == undefined ? this.video.id : this.video.id.videoId);
+    }
   },
 };
 </script>
